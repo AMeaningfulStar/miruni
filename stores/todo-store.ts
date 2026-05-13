@@ -2,24 +2,43 @@ import { create } from 'zustand'
 
 import { Todo } from '@/types/todo'
 
-type TodoStore = {
-  todos: Todo[]
+type AddTodoPayload = Todo
 
-  addTodo: (todo: Todo) => void
-  toggleTodo: (id: string) => void
-  postponeTodo: (id: string, nextDate: string) => void
-  removeTodo: (id: string) => void
+type ToggleTodoPayload = {
+  id: Todo['id']
 }
+
+type PostponeTodoPayload = {
+  id: Todo['id']
+  nextDate: Todo['date']
+}
+
+type RemoveTodoPayload = {
+  id: Todo['id']
+}
+
+type TodoStoreState = {
+  todos: Todo[]
+}
+
+type TodoStoreActions = {
+  addTodo: (payload: AddTodoPayload) => void
+  toggleTodo: (payload: ToggleTodoPayload) => void
+  postponeTodo: (payload: PostponeTodoPayload) => void
+  removeTodo: (payload: RemoveTodoPayload) => void
+}
+
+type TodoStore = TodoStoreState & TodoStoreActions
 
 export const useTodoStore = create<TodoStore>((set) => ({
   todos: [],
 
-  addTodo: (todo) =>
+  addTodo: (payload) =>
     set((state) => ({
-      todos: [...state.todos, todo],
+      todos: [...state.todos, payload],
     })),
 
-  toggleTodo: (id) =>
+  toggleTodo: ({ id }) =>
     set((state) => ({
       todos: state.todos.map((todo) =>
         todo.id === id
@@ -32,7 +51,7 @@ export const useTodoStore = create<TodoStore>((set) => ({
       ),
     })),
 
-  postponeTodo: (id, nextDate) =>
+  postponeTodo: ({ id, nextDate }) =>
     set((state) => ({
       todos: state.todos.map((todo) =>
         todo.id === id
@@ -46,7 +65,7 @@ export const useTodoStore = create<TodoStore>((set) => ({
       ),
     })),
 
-  removeTodo: (id) =>
+  removeTodo: ({ id }) =>
     set((state) => ({
       todos: state.todos.filter((todo) => todo.id !== id),
     })),
