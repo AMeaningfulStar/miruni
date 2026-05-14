@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 import { Todo } from '@/types/todo'
 
@@ -30,43 +32,51 @@ type TodoStoreActions = {
 
 type TodoStore = TodoStoreState & TodoStoreActions
 
-export const useTodoStore = create<TodoStore>((set) => ({
-  todos: [],
+export const useTodoStore = create<TodoStore>()(
+  persist(
+    (set) => ({
+      todos: [],
 
-  addTodo: (payload) =>
-    set((state) => ({
-      todos: [...state.todos, payload],
-    })),
+      addTodo: (payload) =>
+        set((state) => ({
+          todos: [...state.todos, payload],
+        })),
 
-  toggleTodo: ({ id }) =>
-    set((state) => ({
-      todos: state.todos.map((todo) =>
-        todo.id === id
-          ? {
-              ...todo,
-              status: todo.status === 'completed' ? 'pending' : 'completed',
-              updatedAt: new Date().toISOString(),
-            }
-          : todo,
-      ),
-    })),
+      toggleTodo: ({ id }) =>
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo.id === id
+              ? {
+                  ...todo,
+                  status: todo.status === 'completed' ? 'pending' : 'completed',
+                  updatedAt: new Date().toISOString(),
+                }
+              : todo,
+          ),
+        })),
 
-  postponeTodo: ({ id, nextDate }) =>
-    set((state) => ({
-      todos: state.todos.map((todo) =>
-        todo.id === id
-          ? {
-              ...todo,
-              date: nextDate,
-              postponedCount: todo.postponedCount + 1,
-              updatedAt: new Date().toISOString(),
-            }
-          : todo,
-      ),
-    })),
+      postponeTodo: ({ id, nextDate }) =>
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo.id === id
+              ? {
+                  ...todo,
+                  date: nextDate,
+                  postponedCount: todo.postponedCount + 1,
+                  updatedAt: new Date().toISOString(),
+                }
+              : todo,
+          ),
+        })),
 
-  removeTodo: ({ id }) =>
-    set((state) => ({
-      todos: state.todos.filter((todo) => todo.id !== id),
-    })),
-}))
+      removeTodo: ({ id }) =>
+        set((state) => ({
+          todos: state.todos.filter((todo) => todo.id !== id),
+        })),
+    }),
+    {
+      name: 'miruni-todo-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+)
