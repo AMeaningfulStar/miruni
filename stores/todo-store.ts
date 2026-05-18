@@ -21,9 +21,12 @@ type RemoveTodoPayload = {
 
 type TodoStoreState = {
   todos: Todo[]
+  hydrated: boolean
 }
 
 type TodoStoreActions = {
+  setHydrated: (state: boolean) => void
+
   addTodo: (payload: AddTodoPayload) => void
   toggleTodo: (payload: ToggleTodoPayload) => void
   postponeTodo: (payload: PostponeTodoPayload) => void
@@ -36,6 +39,13 @@ export const useTodoStore = create<TodoStore>()(
   persist(
     (set) => ({
       todos: [],
+      hydrated: false,
+
+      setHydrated: (state) => {
+        set({
+          hydrated: state,
+        })
+      },
 
       addTodo: (payload) =>
         set((state) => ({
@@ -76,7 +86,12 @@ export const useTodoStore = create<TodoStore>()(
     }),
     {
       name: 'miruni-todo-storage',
+
       storage: createJSONStorage(() => AsyncStorage),
+
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true)
+      },
     },
   ),
 )
