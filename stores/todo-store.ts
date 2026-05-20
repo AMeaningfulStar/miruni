@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+import { STORAGE_KEY } from '@/constants/storage'
 import { Todo } from '@/types/todo'
 
 type AddTodoPayload = Todo
@@ -85,7 +86,7 @@ export const useTodoStore = create<TodoStore>()(
         })),
     }),
     {
-      name: 'miruni-todo-storage',
+      name: STORAGE_KEY.TODO,
 
       storage: createJSONStorage(() => AsyncStorage),
 
