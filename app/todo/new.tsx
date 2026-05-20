@@ -11,8 +11,35 @@ import {
 
 import { router } from 'expo-router'
 
+import { useTodoStore } from '@/stores/todo-store'
+import { getTodayDateKey } from '@/utils/date'
+
 export default function NewTodoScreen() {
   const [title, setTitle] = useState('')
+
+  const addTodo = useTodoStore((state) => state.addTodo)
+
+  const handleSaveTodo = () => {
+    const trimmedTitle = title.trim()
+
+    if (!trimmedTitle) {
+      return
+    }
+
+    const now = new Date().toISOString()
+
+    addTodo({
+      id: now,
+      title: trimmedTitle,
+      date: getTodayDateKey(),
+      status: 'pending',
+      postponedCount: 0,
+      createdAt: now,
+      updatedAt: now,
+    })
+
+    router.back()
+  }
 
   return (
     <KeyboardAvoidingView
@@ -40,7 +67,7 @@ export default function NewTodoScreen() {
             <Text style={styles.cancelButtonText}>취소</Text>
           </Pressable>
 
-          <Pressable style={[styles.button, styles.saveButton]}>
+          <Pressable style={[styles.button, styles.saveButton]} onPress={handleSaveTodo}>
             <Text style={styles.saveButtonText}>저장</Text>
           </Pressable>
         </View>
