@@ -12,7 +12,7 @@ import {
 import { router } from 'expo-router'
 
 import { useTodoStore } from '@/stores/todo-store'
-import { getTodayDateKey } from '@/utils/date'
+import { createTodo } from '@/utils/todo'
 
 export default function NewTodoScreen() {
   const [title, setTitle] = useState('')
@@ -26,17 +26,7 @@ export default function NewTodoScreen() {
       return
     }
 
-    const now = new Date().toISOString()
-
-    addTodo({
-      id: now,
-      title: trimmedTitle,
-      date: getTodayDateKey(),
-      status: 'pending',
-      postponedCount: 0,
-      createdAt: now,
-      updatedAt: now,
-    })
+    addTodo(createTodo({ title: trimmedTitle }))
 
     router.back()
   }
