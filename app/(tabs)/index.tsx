@@ -67,6 +67,31 @@ export default function HomeScreen() {
             </Text>
           </View>
         )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyEmoji}>
+              🌱
+            </Text>
+
+            <Text style={styles.emptyTitle}>
+              오늘의 할 일이 없어요
+            </Text>
+
+            <Text style={styles.emptyDescription}>
+              첫 번째 할 일을 추가하고
+              미루지 않는 하루를 시작해보세요.
+            </Text>
+
+            <Pressable
+              style={styles.emptyButton}
+              onPress={() => router.push('/todo/new')}
+            >
+              <Text style={styles.emptyButtonText}>
+                할 일 추가하기
+              </Text>
+            </Pressable>
+          </View>
+        }
       />
     </View>
   )
@@ -207,5 +232,58 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13,
     color: '#6B7280',
+  },
+
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    marginTop: 60,
+
+    backgroundColor: '#FFFFFF',
+
+    borderRadius: 24,
+
+    paddingVertical: 40,
+    paddingHorizontal: 24,
+  },
+
+  emptyEmoji: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+  },
+
+  emptyDescription: {
+    marginTop: 8,
+
+    textAlign: 'center',
+
+    fontSize: 14,
+    lineHeight: 22,
+
+    color: '#6B7280',
+  },
+
+  emptyButton: {
+    marginTop: 24,
+
+    backgroundColor: '#8B5CF6',
+
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+
+    borderRadius: 16,
+  },
+
+  emptyButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
   },
 })
