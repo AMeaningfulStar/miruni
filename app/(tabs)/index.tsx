@@ -1,11 +1,29 @@
 import { router } from 'expo-router'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native'
 
 import { getTodayDateKey } from '@/utils/date'
+
+import { useTodoStore } from '@/stores/todo-store'
 
 export default function HomeScreen() {
   const today = getTodayDateKey()
 
+  const todos = useTodoStore((state) => state.todos)
+
+  const hydrated = useTodoStore((state) => state.hydrated)
+
+  const todayTodos = todos.filter(
+    (todo) => todo.date === today,
+  )
+
+  if (!hydrated) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -34,12 +52,22 @@ export default function HomeScreen() {
         </Text>
       </View>
 
-      <View style={styles.previewCard}>
-        <Text style={styles.previewTitle}>TODO 목록 영역</Text>
-        <Text style={styles.previewDescription}>
-          다음 커밋에서 저장된 할 일을 이곳에 보여줄 예정이에요.
-        </Text>
-      </View>
+      <FlatList
+        data={todayTodos}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+        renderItem={({ item }) => (
+          <View style={styles.todoCard}>
+            <Text style={styles.todoTitle}>
+              {item.title}
+            </Text>
+
+            <Text style={styles.todoMeta}>
+              미룬 횟수: {item.postponedCount}
+            </Text>
+          </View>
+        )}
+      />
     </View>
   )
 }
@@ -143,24 +171,41 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  previewCard: {
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  listContainer: {
+    gap: 12,
+  },
+
+  todoCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderRadius: 20,
+    padding: 20,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+
+    elevation: 3,
   },
 
-  previewTitle: {
-    fontSize: 17,
+  todoTitle: {
+    fontSize: 16,
     fontWeight: '700',
-    color: '#374151',
-    marginBottom: 8,
+    color: '#111827',
   },
 
-  previewDescription: {
-    fontSize: 14,
-    lineHeight: 20,
+  todoMeta: {
+    marginTop: 6,
+    fontSize: 13,
     color: '#6B7280',
   },
 })
