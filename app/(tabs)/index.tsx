@@ -1,97 +1,289 @@
-// 오늘 할 일을 보여주는 메인 화면
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { router } from 'expo-router'
+import { Pressable, StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native'
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { getTodayDateKey } from '@/utils/date'
+
+import { useTodoStore } from '@/stores/todo-store'
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const today = getTodayDateKey()
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+  const todos = useTodoStore((state) => state.todos)
+
+  const hydrated = useTodoStore((state) => state.hydrated)
+
+  const todayTodos = todos.filter(
+    (todo) => todo.date === today,
+  )
+
+  if (!hydrated) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+  
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.greeting}>미루니?</Text>
+          <Text style={styles.subtitle}>오늘 할 일을 미루지 말고 시작해봐요</Text>
+        </View>
+
+        <Pressable
+          style={styles.addButton}
+          onPress={() => router.push('/todo/new')}
+        >
+          <Text style={styles.addButtonText}>+</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.todayCard}>
+        <Text style={styles.todayLabel}>오늘 날짜</Text>
+        <Text style={styles.todayDate}>{today}</Text>
+      </View>
+
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>오늘의 할 일</Text>
+        <Text style={styles.sectionDescription}>
+          완료하지 못하면 내일의 부담이 커져요
+        </Text>
+      </View>
+
+      <FlatList
+        data={todayTodos}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+        renderItem={({ item }) => (
+          <View style={styles.todoCard}>
+            <Text style={styles.todoTitle}>
+              {item.title}
+            </Text>
+
+            <Text style={styles.todoMeta}>
+              미룬 횟수: {item.postponedCount}
+            </Text>
+          </View>
+        )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyEmoji}>
+              🌱
+            </Text>
+
+            <Text style={styles.emptyTitle}>
+              오늘의 할 일이 없어요
+            </Text>
+
+            <Text style={styles.emptyDescription}>
+              첫 번째 할 일을 추가하고
+              미루지 않는 하루를 시작해보세요.
+            </Text>
+
+            <Pressable
+              style={styles.emptyButton}
+              onPress={() => router.push('/todo/new')}
+            >
+              <Text style={styles.emptyButtonText}>
+                할 일 추가하기
+              </Text>
+            </Pressable>
+          </View>
+        }
+      />
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 24,
+    paddingTop: 72,
+  },
+
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    marginBottom: 28,
   },
-  stepContainer: {
-    gap: 8,
+
+  greeting: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#111827',
+  },
+
+  subtitle: {
+    marginTop: 6,
+    fontSize: 15,
+    color: '#6B7280',
+  },
+
+  addButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#8B5CF6',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+
+    elevation: 4,
+  },
+
+  addButtonText: {
+    fontSize: 30,
+    lineHeight: 32,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+
+  todayCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 20,
+    marginBottom: 28,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+
+    elevation: 3,
+  },
+
+  todayLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#8B5CF6',
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+
+  todayDate: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#111827',
   },
-});
+
+  sectionHeader: {
+    marginBottom: 16,
+  },
+
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#111827',
+  },
+
+  sectionDescription: {
+    marginTop: 6,
+    fontSize: 14,
+    color: '#6B7280',
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  listContainer: {
+    gap: 12,
+  },
+
+  todoCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+
+    elevation: 3,
+  },
+
+  todoTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+  },
+
+  todoMeta: {
+    marginTop: 6,
+    fontSize: 13,
+    color: '#6B7280',
+  },
+
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    marginTop: 60,
+
+    backgroundColor: '#FFFFFF',
+
+    borderRadius: 24,
+
+    paddingVertical: 40,
+    paddingHorizontal: 24,
+  },
+
+  emptyEmoji: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+  },
+
+  emptyDescription: {
+    marginTop: 8,
+
+    textAlign: 'center',
+
+    fontSize: 14,
+    lineHeight: 22,
+
+    color: '#6B7280',
+  },
+
+  emptyButton: {
+    marginTop: 24,
+
+    backgroundColor: '#8B5CF6',
+
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+
+    borderRadius: 16,
+  },
+
+  emptyButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+})
