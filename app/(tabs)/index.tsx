@@ -58,13 +58,37 @@ export default function HomeScreen() {
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
           <View style={styles.todoCard}>
-            <Text style={styles.todoTitle}>
-              {item.title}
-            </Text>
+            <View style={styles.todoContent}>
+              <View
+                style={[
+                  styles.checkCircle,
+                  item.status === 'completed' &&
+                    styles.checkCircleCompleted,
+                ]}
+              >
+                {item.status === 'completed' && (
+                  <Text style={styles.checkMark}>
+                    ✓
+                  </Text>
+                )}
+              </View>
 
-            <Text style={styles.todoMeta}>
-              미룬 횟수: {item.postponedCount}
-            </Text>
+              <View style={styles.todoInfo}>
+                <Text
+                  style={[
+                    styles.todoTitle,
+                    item.status === 'completed' &&
+                      styles.todoTitleCompleted,
+                  ]}
+                >
+                  {item.title}
+                </Text>
+
+                <Text style={styles.todoMeta}>
+                  미룬 횟수: {item.postponedCount}
+                </Text>
+              </View>
+            </View>
           </View>
         )}
         ListEmptyComponent={
@@ -285,5 +309,44 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 15,
+  },
+
+  todoContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  todoInfo: {
+    flex: 1,
+  },
+
+  checkCircle: {
+    width: 28,
+    height: 28,
+
+    borderRadius: 14,
+
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+
+    marginRight: 14,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  checkCircleCompleted: {
+    backgroundColor: '#8B5CF6',
+    borderColor: '#8B5CF6',
+  },
+
+  checkMark: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+
+  todoTitleCompleted: {
+    textDecorationLine: 'line-through',
+    color: '#9CA3AF',
   },
 })
