@@ -1,7 +1,7 @@
 import { router } from 'expo-router'
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 
-import { getTodayDateKey } from '@/utils/date'
+import { getNextDate, getTodayDateKey } from '@/utils/date'
 
 import { useTodoStore } from '@/stores/todo-store'
 
@@ -18,6 +18,10 @@ export default function HomeScreen() {
 
   const toggleTodo = useTodoStore(
     (state) => state.toggleTodo,
+  )
+
+  const postponeTodo = useTodoStore(
+    (state) => state.postponeTodo,
   )
 
   if (!hydrated) {
@@ -98,7 +102,15 @@ export default function HomeScreen() {
                     미룬 횟수: {item.postponedCount}
                   </Text>
 
-                  <Pressable style={styles.postponeButton}>
+                  <Pressable
+                    style={styles.postponeButton}
+                    onPress={() =>
+                      postponeTodo({
+                        id: item.id,
+                        nextDate: getNextDate(item.date),
+                      })
+                    }
+                  >
                     <Text style={styles.postponeButtonText}>
                       미루기
                     </Text>
