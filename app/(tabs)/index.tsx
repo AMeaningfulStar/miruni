@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { Pressable, StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { getTodayDateKey } from '@/utils/date'
 
@@ -93,9 +93,17 @@ export default function HomeScreen() {
                   {item.title}
                 </Text>
 
-                <Text style={styles.todoMeta}>
-                  미룬 횟수: {item.postponedCount}
-                </Text>
+                <View style={styles.todoFooter}>
+                  <Text style={styles.todoMeta}>
+                    미룬 횟수: {item.postponedCount}
+                  </Text>
+
+                  <Pressable style={styles.postponeButton}>
+                    <Text style={styles.postponeButtonText}>
+                      미루기
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
           </View>
@@ -357,5 +365,31 @@ const styles = StyleSheet.create({
   todoTitleCompleted: {
     textDecorationLine: 'line-through',
     color: '#9CA3AF',
+  },
+
+  todoFooter: {
+    marginTop: 10,
+
+    flexDirection: 'row',
+
+    alignItems: 'center',
+
+    justifyContent: 'space-between',
+  },
+
+  postponeButton: {
+    backgroundColor: '#F3F4F6',
+
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+
+    borderRadius: 10,
+  },
+
+  postponeButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+
+    color: '#6B7280',
   },
 })
