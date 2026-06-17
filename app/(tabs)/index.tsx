@@ -5,6 +5,14 @@ import { getNextDate, getTodayDateKey } from '@/utils/date'
 
 import { useTodoStore } from '@/stores/todo-store'
 
+const getBurdenLevel = (count: number) => {
+  if (count === 0) return '새로운 할 일 🌱'
+  if (count <= 2) return '조금 미뤘어요 🙂'
+  if (count <= 5) return '부담이 쌓이고 있어요 😅'
+
+  return '위험! 많이 미뤘어요 🔥'
+}
+
 export default function HomeScreen() {
   const today = getTodayDateKey()
 
@@ -98,9 +106,17 @@ export default function HomeScreen() {
                 </Text>
 
                 <View style={styles.todoFooter}>
-                  <Text style={styles.todoMeta}>
-                    미룬 횟수: {item.postponedCount}
-                  </Text>
+                  <View style={styles.metaContainer}>
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>
+                        {item.postponedCount}회
+                      </Text>
+                    </View>
+
+                    <Text style={styles.burdenText}>
+                      {getBurdenLevel(item.postponedCount)}
+                    </Text>
+                  </View>
 
                   <Pressable
                     style={styles.postponeButton}
@@ -402,6 +418,32 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
 
+    color: '#6B7280',
+  },
+
+  metaContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+
+  badge: {
+    backgroundColor: '#EDE9FE',
+
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+
+    borderRadius: 999,
+  },
+
+  badgeText: {
+    color: '#7C3AED',
+    fontWeight: '700',
+    fontSize: 12,
+  },
+
+  burdenText: {
+    fontSize: 12,
     color: '#6B7280',
   },
 })
