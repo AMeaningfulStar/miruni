@@ -16,6 +16,10 @@ export default function HomeScreen() {
     (todo) => todo.date === today,
   )
 
+  const toggleTodo = useTodoStore(
+    (state) => state.toggleTodo,
+  )
+
   if (!hydrated) {
     return (
       <View style={styles.loadingContainer}>
@@ -59,7 +63,12 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <View style={styles.todoCard}>
             <View style={styles.todoContent}>
-              <View
+              <Pressable
+                onPress={() =>
+                  toggleTodo({
+                    id: item.id,
+                  })
+                }
                 style={[
                   styles.checkCircle,
                   item.status === 'completed' &&
@@ -71,7 +80,7 @@ export default function HomeScreen() {
                     ✓
                   </Text>
                 )}
-              </View>
+              </Pressable>
 
               <View style={styles.todoInfo}>
                 <Text
