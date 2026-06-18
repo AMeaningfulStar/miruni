@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { Todo } from '@/types/todo'
 
 type TodoCardProps = {
   todo: Todo
+  onToggle: (id: Todo['id']) => void
+  onPostpone: (todo: Todo) => void
 }
 
 const getBurdenLevel = (count: number) => {
@@ -14,20 +16,21 @@ const getBurdenLevel = (count: number) => {
   return '위험! 많이 미뤘어요 🔥'
 }
 
-export function TodoCard({ todo }: TodoCardProps) {
-  return (
+export function TodoCard({ todo, onToggle, onPostpone }: TodoCardProps) {
+    return (
     <View style={styles.todoCard}>
       <View style={styles.todoContent}>
-        <View
+        <Pressable
           style={[
             styles.checkCircle,
             todo.status === 'completed' && styles.checkCircleCompleted,
           ]}
+          onPress={() => onToggle(todo.id)}
         >
           {todo.status === 'completed' && (
             <Text style={styles.checkMark}>✓</Text>
           )}
-        </View>
+        </Pressable>
 
         <View style={styles.todoInfo}>
           <Text
@@ -50,9 +53,12 @@ export function TodoCard({ todo }: TodoCardProps) {
               </Text>
             </View>
 
-            <View style={styles.postponeButton}>
+            <Pressable
+              style={styles.postponeButton}
+              onPress={() => onPostpone(todo)}
+            >
               <Text style={styles.postponeButtonText}>미루기</Text>
-            </View>
+            </Pressable>
           </View>
         </View>
       </View>

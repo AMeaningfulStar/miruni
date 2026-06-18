@@ -1,6 +1,8 @@
 import { router } from 'expo-router'
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 
+import { TodoCard } from '@/components/todo/TodoCard'
+
 import { getNextDate, getTodayDateKey } from '@/utils/date'
 
 import { useTodoStore } from '@/stores/todo-store'
@@ -73,68 +75,20 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <View style={styles.todoCard}>
-            <View style={styles.todoContent}>
-              <Pressable
-                onPress={() =>
-                  toggleTodo({
-                    id: item.id,
-                  })
-                }
-                style={[
-                  styles.checkCircle,
-                  item.status === 'completed' &&
-                    styles.checkCircleCompleted,
-                ]}
-              >
-                {item.status === 'completed' && (
-                  <Text style={styles.checkMark}>
-                    ✓
-                  </Text>
-                )}
-              </Pressable>
-
-              <View style={styles.todoInfo}>
-                <Text
-                  style={[
-                    styles.todoTitle,
-                    item.status === 'completed' &&
-                      styles.todoTitleCompleted,
-                  ]}
-                >
-                  {item.title}
-                </Text>
-
-                <View style={styles.todoFooter}>
-                  <View style={styles.metaContainer}>
-                    <View style={styles.badge}>
-                      <Text style={styles.badgeText}>
-                        {item.postponedCount}회
-                      </Text>
-                    </View>
-
-                    <Text style={styles.burdenText}>
-                      {getBurdenLevel(item.postponedCount)}
-                    </Text>
-                  </View>
-
-                  <Pressable
-                    style={styles.postponeButton}
-                    onPress={() =>
-                      postponeTodo({
-                        id: item.id,
-                        nextDate: getNextDate(item.date),
-                      })
-                    }
-                  >
-                    <Text style={styles.postponeButtonText}>
-                      미루기
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
-            </View>
-          </View>
+          <TodoCard
+            todo={item}
+            onToggle={(id) =>
+              toggleTodo({
+                id,
+              })
+            }
+            onPostpone={(todo) =>
+              postponeTodo({
+                id: todo.id,
+                nextDate: getNextDate(todo.date),
+              })
+            }
+          />
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
