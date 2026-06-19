@@ -6,6 +6,7 @@ type TodoCardProps = {
   todo: Todo
   onToggle: (id: Todo['id']) => void
   onPostpone: (todo: Todo) => void
+  onRemove: (id: Todo['id']) => void
 }
 
 const getBurdenLevel = (count: number) => {
@@ -16,8 +17,13 @@ const getBurdenLevel = (count: number) => {
   return '위험! 많이 미뤘어요 🔥'
 }
 
-export function TodoCard({ todo, onToggle, onPostpone }: TodoCardProps) {
-    return (
+export function TodoCard({
+  todo,
+  onToggle,
+  onPostpone,
+  onRemove,
+}: TodoCardProps){
+  return (
     <View style={styles.todoCard}>
       <View style={styles.todoContent}>
         <Pressable
@@ -58,8 +64,13 @@ export function TodoCard({ todo, onToggle, onPostpone }: TodoCardProps) {
                 <Text style={styles.postponeButtonText}>미루기</Text>
               </Pressable>
 
-              <Pressable style={styles.deleteButton}>
-                <Text style={styles.deleteButtonText}>삭제</Text>
+              <Pressable
+                style={styles.deleteButton}
+                onPress={() => onRemove(todo.id)}
+              >
+                <Text style={styles.deleteButtonText}>
+                  삭제
+                </Text>
               </Pressable>
             </View>
           </View>

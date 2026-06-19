@@ -26,6 +26,10 @@ export default function HomeScreen() {
     (state) => state.postponeTodo,
   )
 
+  const removeTodo = useTodoStore(
+    (state) => state.removeTodo,
+  )
+
   if (!hydrated) {
     return (
       <View style={styles.loadingContainer}>
@@ -78,6 +82,11 @@ export default function HomeScreen() {
               postponeTodo({
                 id: todo.id,
                 nextDate: getNextDate(todo.date),
+              })
+            }
+            onRemove={(id) =>
+              removeTodo({
+                id,
               })
             }
           />
