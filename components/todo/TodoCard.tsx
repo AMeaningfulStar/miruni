@@ -6,6 +6,7 @@ type TodoCardProps = {
   todo: Todo
   onToggle: (id: Todo['id']) => void
   onPostpone: (todo: Todo) => void
+  onRemove: (id: Todo['id']) => void
 }
 
 const getBurdenLevel = (count: number) => {
@@ -16,8 +17,13 @@ const getBurdenLevel = (count: number) => {
   return '위험! 많이 미뤘어요 🔥'
 }
 
-export function TodoCard({ todo, onToggle, onPostpone }: TodoCardProps) {
-    return (
+export function TodoCard({
+  todo,
+  onToggle,
+  onPostpone,
+  onRemove,
+}: TodoCardProps){
+  return (
     <View style={styles.todoCard}>
       <View style={styles.todoContent}>
         <Pressable
@@ -53,12 +59,25 @@ export function TodoCard({ todo, onToggle, onPostpone }: TodoCardProps) {
               </Text>
             </View>
 
-            <Pressable
-              style={styles.postponeButton}
-              onPress={() => onPostpone(todo)}
-            >
-              <Text style={styles.postponeButtonText}>미루기</Text>
-            </Pressable>
+            <View style={styles.todoActions}>
+              <Pressable
+                style={[styles.actionButton, styles.postponeButton]}
+                onPress={() => onPostpone(todo)}
+              >
+                <Text style={[styles.actionButtonText, styles.postponeButtonText]}>
+                  미루기
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.actionButton, styles.deleteButton]}
+                onPress={() => onRemove(todo.id)}
+              >
+                <Text style={[styles.actionButtonText, styles.deleteButtonText]}>
+                  삭제
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -164,19 +183,36 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  postponeButton: {
-    backgroundColor: '#F3F4F6',
+  todoActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
 
+  actionButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-
     borderRadius: 10,
   },
 
-  postponeButtonText: {
+  actionButtonText: {
     fontSize: 13,
     fontWeight: '600',
+  },
 
+  postponeButton: {
+    backgroundColor: '#F3F4F6',
+  },
+
+  postponeButtonText: {
     color: '#6B7280',
+  },
+
+  deleteButton: {
+    backgroundColor: '#FEE2E2',
+  },
+
+  deleteButtonText: {
+    color: '#DC2626',
   },
 })
