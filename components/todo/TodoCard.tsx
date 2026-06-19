@@ -53,12 +53,15 @@ export function TodoCard({ todo, onToggle, onPostpone }: TodoCardProps) {
               </Text>
             </View>
 
-            <Pressable
-              style={styles.postponeButton}
-              onPress={() => onPostpone(todo)}
-            >
-              <Text style={styles.postponeButtonText}>미루기</Text>
-            </Pressable>
+            <View style={styles.todoActions}>
+              <Pressable style={styles.postponeButton} onPress={() => onPostpone(todo)}>
+                <Text style={styles.postponeButtonText}>미루기</Text>
+              </Pressable>
+
+              <Pressable style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>삭제</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -178,5 +181,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
 
     color: '#6B7280',
+  },
+
+  todoActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+
+  deleteButton: {
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+
+  deleteButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#DC2626',
   },
 })
