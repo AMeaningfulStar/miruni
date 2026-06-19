@@ -60,15 +60,20 @@ export function TodoCard({
             </View>
 
             <View style={styles.todoActions}>
-              <Pressable style={styles.postponeButton} onPress={() => onPostpone(todo)}>
-                <Text style={styles.postponeButtonText}>미루기</Text>
+              <Pressable
+                style={[styles.actionButton, styles.postponeButton]}
+                onPress={() => onPostpone(todo)}
+              >
+                <Text style={[styles.actionButtonText, styles.postponeButtonText]}>
+                  미루기
+                </Text>
               </Pressable>
 
               <Pressable
-                style={styles.deleteButton}
+                style={[styles.actionButton, styles.deleteButton]}
                 onPress={() => onRemove(todo.id)}
               >
-                <Text style={styles.deleteButtonText}>
+                <Text style={[styles.actionButtonText, styles.deleteButtonText]}>
                   삭제
                 </Text>
               </Pressable>
@@ -178,38 +183,36 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  postponeButton: {
-    backgroundColor: '#F3F4F6',
-
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-
-    borderRadius: 10,
-  },
-
-  postponeButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-
-    color: '#6B7280',
-  },
-
   todoActions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
 
-  deleteButton: {
-    backgroundColor: '#FEE2E2',
+  actionButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 10,
   },
 
-  deleteButtonText: {
+  actionButtonText: {
     fontSize: 13,
     fontWeight: '600',
+  },
+
+  postponeButton: {
+    backgroundColor: '#F3F4F6',
+  },
+
+  postponeButtonText: {
+    color: '#6B7280',
+  },
+
+  deleteButton: {
+    backgroundColor: '#FEE2E2',
+  },
+
+  deleteButtonText: {
     color: '#DC2626',
   },
 })
